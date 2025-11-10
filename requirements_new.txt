@@ -27,6 +27,13 @@ python-dateutil>=2.8.0
 # Sécurité
 cryptography>=41.0.0
 
+# Traitement d'images (pour le module images)
+pillow>=10.0.0
+
+# Musique (optionnel - nécessite FFmpeg installé)
+# yt-dlp>=2023.10.0
+# PyNaCl>=1.5.0
+
 # Performance et monitoring (optionnel)
 psutil>=5.9.0
 
