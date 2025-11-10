@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Bot Discord{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
+    <div class="badge bg-success fs-6">
+        <i class="bi bi-circle-fill"></i> En ligne
+    </div>
+</div>
+
+<div class="row mb-4" id="stats-container">
+    <div class="col-md-3">
+        <div class="card stat-card text-center p-3">
+            <h3>{{ stats.guilds }}</h3>
+            <p class="mb-0">Serveurs</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card text-center p-3">
+            <h3>{{ stats.users }}</h3>
+            <p class="mb-0">Utilisateurs</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card text-center p-3">
+            <h3>{{ stats.commands_today }}</h3>
+            <p class="mb-0">Commandes aujourd'hui</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card text-center p-3">
+            <h3>{{ stats.uptime }}</h3>
+            <p class="mb-0">Uptime</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-activity"></i> Activité Récente</h5>
+            </div>
+            <div class="card-body">
+                {% for activity in recent_activities %}
+                <div class="activity-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ activity.action_type }}</strong>
+                            <p class="mb-1 text-muted">{{ activity.description }}</p>
+                        </div>
+                        <small class="text-muted">{{ activity.timestamp }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-gear"></i> Actions Rapides</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('economy') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-coin"></i> Gérer l'Économie
+                    </a>
+                    <a href="{{ url_for('moderation') }}" class="btn btn-outline-warning">
+                        <i class="bi bi-shield"></i> Modération
+                    </a>
+                    <a href="{{ url_for('settings') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-gear"></i> Paramètres
+                    </a>
+                    <button class="btn btn-outline-info" onclick="refreshStats(this)">
+                        <i class="bi bi-arrow-clockwise"></i> Actualiser
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="bi bi-exclamation-triangle"></i> Alertes</h5>
+            </div>
+            <div class="card-body">
+                {% if alerts %}
+                    {% for alert in alerts %}
+                    <div class="alert alert-{{ alert.type }} py-2 px-3">
+                        {{ alert.message }}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <p class="text-muted mb-0">Aucune alerte</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function refreshStats(btn) {
+    const button = btn || document.querySelector('button[onclick*="refreshStats"]');
+    const originalText = button ? button.innerHTML : '';
+    if (button) {
+        button.innerHTML = '<span class="loading"></span> Actualisation...';
+        button.disabled = true;
+    }
+
+    fetch('/api/stats')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('stats-container').innerHTML = updateStats(data);
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+        })
+        .finally(() => {
+            if (button) {
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 500);
+            }
+        });
+}
+</script>
+{% endblock %}

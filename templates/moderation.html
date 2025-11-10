@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Modération - Bot Discord{% endblock %}
+{% block content %}
+<h1><i class="bi bi-shield"></i> Modération</h1>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-person-lines-fill"></i> Liste des membres
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Utilisateur</th>
+                            <th>Rôle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                        <tr>
+                            <td>{{ member.username }}</td>
+                            <td>{{ member.role }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm">Bannir</button>
+                                <button class="btn btn-warning btn-sm">Mute</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-graph-up"></i> Statistiques modération
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>Total de membres : <strong>{{ stats.member_count }}</strong></li>
+                    <li>Membres bannis : <strong>{{ stats.banned_count }}</strong></li>
+                    <li>Membres mutés : <strong>{{ stats.muted_count }}</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

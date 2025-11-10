@@ -1,0 +1,42 @@
+# Bot Discord - Dépendances mises à jour
+# Installation: pip install -r requirements_new.txt
+
+# Core Discord
+discord.py>=2.3.0
+
+# Base de données
+aiosqlite>=0.19.0
+
+# Configuration et environnement
+python-dotenv>=1.0.0
+
+# Interface web
+flask>=2.3.0
+werkzeug>=2.3.0
+
+# RSS et feeds
+feedparser>=6.0.10
+
+# Requêtes HTTP
+requests>=2.31.0
+aiohttp>=3.8.0
+
+# Utilitaires
+python-dateutil>=2.8.0
+
+# Sécurité
+cryptography>=41.0.0
+
+# Performance et monitoring (optionnel)
+psutil>=5.9.0
+
+# Tests (optionnel pour le développement)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Formatage de code (optionnel pour le développement)
+black>=23.0.0
+isort>=5.12.0
+
+# Documentation (optionnel)
+sphinx>=7.0.0
