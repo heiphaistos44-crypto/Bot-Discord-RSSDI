@@ -218,12 +218,146 @@ class DatabaseManager:
                     FOREIGN KEY (item_id) REFERENCES shop_items(id)
                 );
                 
+                -- Configuration des tickets
+                CREATE TABLE IF NOT EXISTS ticket_config (
+                    guild_id INTEGER PRIMARY KEY,
+                    category_id INTEGER,
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id)
+                );
+
+                -- Tickets de support
+                CREATE TABLE IF NOT EXISTS tickets (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    guild_id INTEGER,
+                    channel_id INTEGER,
+                    user_id INTEGER,
+                    subject TEXT,
+                    status TEXT DEFAULT 'open',
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    closed_at DATETIME,
+                    closed_by INTEGER,
+                    close_reason TEXT,
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id),
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                );
+
+                -- Configuration bienvenue/au revoir
+                CREATE TABLE IF NOT EXISTS welcome_config (
+                    guild_id INTEGER PRIMARY KEY,
+                    welcome_enabled BOOLEAN DEFAULT FALSE,
+                    welcome_channel_id INTEGER,
+                    welcome_message TEXT,
+                    goodbye_enabled BOOLEAN DEFAULT FALSE,
+                    goodbye_channel_id INTEGER,
+                    goodbye_message TEXT,
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id)
+                );
+
+                -- Configuration des logs
+                CREATE TABLE IF NOT EXISTS logging_config (
+                    guild_id INTEGER PRIMARY KEY,
+                    log_channel_id INTEGER,
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id)
+                );
+
+                -- Sondages
+                CREATE TABLE IF NOT EXISTS polls (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    guild_id INTEGER,
+                    channel_id INTEGER,
+                    message_id INTEGER,
+                    question TEXT,
+                    options TEXT,
+                    author_id INTEGER,
+                    end_time DATETIME,
+                    active BOOLEAN DEFAULT TRUE,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id),
+                    FOREIGN KEY (author_id) REFERENCES users(id)
+                );
+
+                -- Rappels
+                CREATE TABLE IF NOT EXISTS reminders (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER,
+                    guild_id INTEGER,
+                    channel_id INTEGER,
+                    message TEXT,
+                    remind_at DATETIME,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    sent BOOLEAN DEFAULT FALSE,
+                    FOREIGN KEY (user_id) REFERENCES users(id),
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id)
+                );
+
+                -- Reaction-roles
+                CREATE TABLE IF NOT EXISTS reaction_roles (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    guild_id INTEGER,
+                    channel_id INTEGER,
+                    message_id INTEGER,
+                    emoji TEXT,
+                    role_id INTEGER,
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id),
+                    UNIQUE(guild_id, message_id, emoji)
+                );
+
+                -- Giveaways
+                CREATE TABLE IF NOT EXISTS giveaways (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    guild_id INTEGER,
+                    channel_id INTEGER,
+                    message_id INTEGER,
+                    prize TEXT,
+                    winners_count INTEGER,
+                    end_time DATETIME,
+                    host_id INTEGER,
+                    ended BOOLEAN DEFAULT FALSE,
+                    winner_ids TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id),
+                    FOREIGN KEY (host_id) REFERENCES users(id)
+                );
+
+                -- Notes sur les utilisateurs
+                CREATE TABLE IF NOT EXISTS user_notes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    guild_id INTEGER,
+                    user_id INTEGER,
+                    moderator_id INTEGER,
+                    note TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id),
+                    FOREIGN KEY (user_id) REFERENCES users(id),
+                    FOREIGN KEY (moderator_id) REFERENCES users(id)
+                );
+
+                -- Statistiques des jeux
+                CREATE TABLE IF NOT EXISTS game_stats (
+                    user_id INTEGER,
+                    guild_id INTEGER,
+                    game_name TEXT,
+                    wins INTEGER DEFAULT 0,
+                    losses INTEGER DEFAULT 0,
+                    draws INTEGER DEFAULT 0,
+                    total_played INTEGER DEFAULT 0,
+                    last_played DATETIME,
+                    PRIMARY KEY (user_id, guild_id, game_name),
+                    FOREIGN KEY (user_id) REFERENCES users(id),
+                    FOREIGN KEY (guild_id) REFERENCES guilds(id)
+                );
+
                 -- Index pour optimiser les performances
                 CREATE INDEX IF NOT EXISTS idx_members_guild_xp ON members(guild_id, xp DESC);
                 CREATE INDEX IF NOT EXISTS idx_warnings_user_guild ON warnings(user_id, guild_id, active);
                 CREATE INDEX IF NOT EXISTS idx_activity_logs_guild_time ON activity_logs(guild_id, timestamp DESC);
                 CREATE INDEX IF NOT EXISTS idx_tags_guild_name ON tags(guild_id, name);
                 CREATE INDEX IF NOT EXISTS idx_auto_reactions_guild ON auto_reactions(guild_id);
+                CREATE INDEX IF NOT EXISTS idx_tickets_guild_status ON tickets(guild_id, status);
+                CREATE INDEX IF NOT EXISTS idx_reminders_user_time ON reminders(user_id, remind_at);
+                CREATE INDEX IF NOT EXISTS idx_reaction_roles_message ON reaction_roles(message_id);
+                CREATE INDEX IF NOT EXISTS idx_giveaways_guild_ended ON giveaways(guild_id, ended);
+                CREATE INDEX IF NOT EXISTS idx_user_notes_user ON user_notes(guild_id, user_id);
             """)
             await db.commit()
             logger.info("Base de données initialisée avec succès")

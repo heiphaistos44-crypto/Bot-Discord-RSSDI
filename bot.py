@@ -97,7 +97,16 @@ class DiscordBot(commands.Bot):
             'cogs.games',
             'cogs.legacy_commands',
             'cogs.advanced_utils',
-            'cogs.fun_extras'
+            'cogs.fun_extras',
+            'cogs.tickets',
+            'cogs.welcome',
+            'cogs.logging',
+            'cogs.info',
+            'cogs.polls',
+            'cogs.reminders',
+            'cogs.reactionroles',
+            'cogs.giveaways',
+            'cogs.notes'
         ]
         
         loaded_count = 0
