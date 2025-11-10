@@ -92,21 +92,48 @@ class DiscordBot(commands.Bot):
     async def _load_cogs(self):
         """Charge tous les cogs"""
         cogs = [
+            # Modules de base
             'cogs.economy',
             'cogs.moderation',
             'cogs.games',
             'cogs.legacy_commands',
             'cogs.advanced_utils',
             'cogs.fun_extras',
+
+            # Systèmes de gestion
             'cogs.tickets',
             'cogs.welcome',
             'cogs.logging',
-            'cogs.info',
             'cogs.polls',
             'cogs.reminders',
             'cogs.reactionroles',
             'cogs.giveaways',
-            'cogs.notes'
+            'cogs.notes',
+            'cogs.suggestions_system',
+
+            # Information et statistiques
+            'cogs.info',
+            'cogs.statistics',
+            'cogs.leveling',
+
+            # Divertissement et social
+            'cogs.entertainment',
+            'cogs.social',
+            'cogs.minigames',
+
+            # Musique et médias
+            'cogs.music',
+            'cogs.images',
+
+            # Recherche et API
+            'cogs.search',
+
+            # Gestion serveur et configuration
+            'cogs.server_management',
+            'cogs.configuration',
+
+            # Utilitaires supplémentaires
+            'cogs.utilities_extra'
         ]
         
         loaded_count = 0
